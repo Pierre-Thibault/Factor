@@ -67,6 +67,8 @@ def gen_factors(n):
     type_n = type(n)
     assert type_n is int or (type_n is float and n.is_integer()), "Wrong type"
     assert n > 0, 'n must be positive'
+    if not primes:
+        _get_primes()
     yield from _gen_factors(int(n), set())
 
 
@@ -98,7 +100,6 @@ def get_factors(n):
     return sorted(set(gen_factors(n)))
 
 
-_get_primes()
 if __name__ == '__main__':
     l = (1e15,)
     for n in l:
