@@ -3,7 +3,7 @@ Created 2018-08-03
 
 @author: Pierre Thibault
 
-A module for get all the factors of a number.
+A Python module for get all the factors of a number.
 
 Get the prime list at: https://primes.utm.edu/lists/small/millions/
 
