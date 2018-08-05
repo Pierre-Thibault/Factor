@@ -22,6 +22,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 import bisect
+import itertools
 import math
 import pathlib
 
@@ -38,15 +39,18 @@ def _get_primes():
 
     global primes
     global last_prime
-    path_to_primes = pathlib.Path(__file__).parent \
-            .joinpath('../resources/primes.txt')
-    with path_to_primes.open() as file:
-        for line in file:
-            for n in line.split():
-                n = n.strip()
-                if n:
-                    n = int(n)
-                    primes.append(n)
+    for count in itertools.count(1):
+        path_to_primes = pathlib.Path(__file__).parent \
+                .joinpath('../resources/primes{}.txt'.format(count))
+        if not path_to_primes.exists():
+            break
+        with path_to_primes.open() as file:
+            for line in file:
+                for n in line.split():
+                    n = n.strip()
+                    if n:
+                        n = int(n)
+                        primes.append(n)
     last_prime = primes[-1]
 
 
@@ -58,17 +62,26 @@ def gen_primes_before(n):
     assert n <= last_prime, "Maximum value for n is {}".format(last_prime)
     pos = bisect.bisect_left(primes, n)
     if pos:
-        yield from primes[:pos - 1]
+        yield from primes[:pos]
 
 
 def gen_factors(n):
+    type_n = type(n)
+    assert type_n is int or (type_n is float and n.is_integer()), "Wrong type"
+    assert n > 0, 'n must be positive'
+    yield from _gen_factors(int(n), set())
+
+
+def _gen_factors(n, done):
     """
     Generates all the factors of a number. May return some values multiple
     times. Values returned are not ordered.
     """
-    type_n = type(n)
-    assert type_n is int or (type_n is float and n.is_integer()), "Wrong type"
     n = int(n)
+    if n in done:
+        return
+    else:
+        done.add(n)
     r = int(math.sqrt(n)) + 1
     assert r <= last_prime, "n is over limit"
     yield 1
@@ -76,8 +89,8 @@ def gen_factors(n):
     for prime in gen_primes_before(r):
         partner = n/prime
         if partner.is_integer():
-            yield from gen_factors(prime)
-            yield from gen_factors(partner)
+            yield from _gen_factors(prime, done)
+            yield from _gen_factors(partner, done)
 
 
 def get_factors(n):
@@ -89,6 +102,6 @@ def get_factors(n):
 
 _get_primes()
 if __name__ == '__main__':
-    l = (1e9,)
+    l = (1e15,)
     for n in l:
         print("The factors of {} are {}".format(n, get_factors(n)))
