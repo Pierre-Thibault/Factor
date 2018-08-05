@@ -60,9 +60,7 @@ def gen_primes_before(n):
     """
 
     assert n <= last_prime, "Maximum value for n is {}".format(last_prime)
-    pos = bisect.bisect_left(primes, n)
-    if pos:
-        yield from primes[:pos]
+    yield from primes[:bisect.bisect_left(primes, n)]
 
 
 def gen_factors(n):
