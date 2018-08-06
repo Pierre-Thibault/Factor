@@ -80,8 +80,7 @@ def _gen_factors(n, done):
     n = int(n)
     if n in done:
         return
-    else:
-        done.add(n)
+    done.add(n)
     r = int(math.sqrt(n)) + 1
     assert r <= last_prime, "n is over limit"
     yield 1
@@ -101,6 +100,6 @@ def get_factors(n):
 
 
 if __name__ == '__main__':
-    l = (1e15,)
+    l = (1e9,)
     for n in l:
         print("The factors of {} are {}".format(n, get_factors(n)))
