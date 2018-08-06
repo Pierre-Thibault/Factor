@@ -45,12 +45,7 @@ def _get_primes():
         if not path_to_primes.exists():
             break
         with path_to_primes.open() as file:
-            for line in file:
-                for n in line.split():
-                    n = n.strip()
-                    if n:
-                        n = int(n)
-                        primes.append(n)
+            primes.extend(int(n) for line in file for n in line.split())
     last_prime = primes[-1]
 
 
