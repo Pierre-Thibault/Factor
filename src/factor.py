@@ -78,8 +78,7 @@ def _gen_factors(n, done):
     done.add(n)
     r = int(math.sqrt(n)) + 1
     assert r <= last_prime, "n is over limit"
-    yield 1
-    yield n
+    yield from (1, n)
     for prime in gen_primes_before(r):
         partner = n/prime
         if partner.is_integer():
