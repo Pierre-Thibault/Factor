@@ -6,6 +6,7 @@ Created 2018-08-03
 A Python module for get all the factors of a number.
 
 Get the prime list at: https://primes.utm.edu/lists/small/millions/
+(I added all the files)
 
 Tested on Python 3.7
 
@@ -45,7 +46,12 @@ def _get_primes():
         if not path_to_primes.exists():
             break
         with path_to_primes.open() as file:
-            primes.extend(int(n) for line in file for n in line.split())
+            for line in file:
+                for n in line.split():
+                    try:
+                        primes.append(int(n))
+                    except ValueError:
+                        break
     last_prime = primes[-1]
 
 
