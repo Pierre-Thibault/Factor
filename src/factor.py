@@ -8,7 +8,7 @@ A Python module for get all the factors of a number.
 Get the prime list at: https://primes.utm.edu/lists/small/millions/
 (I added all the files)
 
-Tested on Python 3.7
+Tested on Python 3.12
 
 MIT Licence:
 
