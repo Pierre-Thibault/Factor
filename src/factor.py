@@ -1,5 +1,4 @@
-"""
-Created 2018-08-03
+"""Created 2018-08-03.
 
 @author: Pierre Thibault
 
@@ -14,11 +13,18 @@ MIT Licence:
 
 Copyright 2018 Pierre Thibault
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import bisect
@@ -32,16 +38,11 @@ last_prime: int = 0
 
 
 def _load_primes() -> None:
-    """
-    Load all the primes in global primes. Set global last_prime to last prime
-    read.
-    """
-
-    global primes
+    """Load all the primes in global primes. Set global last_prime to last prime read."""
     global last_prime
     for count in itertools.count(1):
         path_to_primes = pathlib.Path(__file__).parent.joinpath(
-            "../resources/primes{}.txt".format(count)
+            f"../resources/primes{count}.txt",
         )
         if not path_to_primes.exists():
             break
@@ -50,40 +51,38 @@ def _load_primes() -> None:
                 for n in line.split():
                     try:
                         primes.append(int(n))
-                    except ValueError:
+                    except ValueError:  # noqa:PERF203
                         break
     last_prime = primes[-1]
 
 
 def gen_primes_before(n: int) -> Iterable[int]:
-    """
-    Generates all the primes before n in reverse order.
-    """
-
-    assert n <= last_prime, "Maximum value for n is {last_prime}"
+    """Generate all the primes before n in reverse order."""
+    if not n <= last_prime:
+        raise ValueError(n, "Maximum value for n is {last_prime}")
     yield from primes[: bisect.bisect_left(primes, n)]
 
 
 def gen_factors(n: int) -> Iterable[int]:
-    type_n = type(n)
-    assert type_n is int or (type_n is float and n.is_integer()), "Wrong type"
-    assert n > 0, "n must be positive"
+    """Generate the factors of n."""
+    if not n > 0:
+        raise ValueError(n, "n must be positive")
     if not primes:
         _load_primes()
     yield from _gen_factors(int(n), set())
 
 
 def _gen_factors(n: int, done: set[int]) -> Iterable[int]:
-    """
-    Generates all the factors of a number. May return some values multiple
-    times. Values returned are not ordered.
-    """
+    """Generate all the factors of a number.
 
+    May return some values multiple times. Values returned are not ordered.
+    """
     if n in done:
         return
     done.add(n)
     r = int(math.sqrt(n)) + 1
-    assert r <= last_prime, "n is over limit"
+    if not r <= last_prime:
+        raise ValueError(n, "n is over limit")
     yield from (1, n)
     for prime in gen_primes_before(r):
         partner = n / prime
@@ -93,13 +92,11 @@ def _gen_factors(n: int, done: set[int]) -> Iterable[int]:
 
 
 def get_factors(n: int) -> list[int]:
-    """
-    Get all the factors of n as a sorted list.
-    """
+    """Get all the factors of n as a sorted list."""
     return sorted(set(gen_factors(n)))
 
 
 if __name__ == "__main__":
     numbers: Iterable[int] = (1_000_000_000,)
     for number in numbers:
-        print(f"The factors of {number} are {get_factors(number)}")
+        print(f"The factors of {number} are {get_factors(number)}")  # noqa:T201
