@@ -1,4 +1,5 @@
-"""Created 2018-08-03.
+"""
+Created 2018-08-03.
 
 @author: Pierre Thibault
 
@@ -73,7 +74,8 @@ def gen_factors(n: int) -> Iterable[int]:
 
 
 def _gen_factors(n: int, done: set[int]) -> Iterable[int]:
-    """Generate all the factors of a number.
+    """
+    Generate all the factors of a number.
 
     May return some values multiple times. Values returned are not ordered.
     """
